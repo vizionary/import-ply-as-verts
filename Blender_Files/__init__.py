@@ -19,34 +19,19 @@
 # <pep8-80 compliant>
 
 bl_info = {
-    "name": "Import PLY as Verts",
-    "author": "Michael A. Prostka (based on Merry, Barton, Montagne, and Rachinsky",
-    "version": (2, 0, 0),
-    "blender": (3, 0, 0),
-    "location": "File > Import/Export",
-    "description": "Import-Export PLY data (as Mesh or Cloud) with UVs and vertex colors",
-    "category": "Import-Export",
-}
-
-# ORIGINAL COPYRIGHT
-# Copyright (C) 2004, 2005: Bruce Merry, bmerry@cs.uct.ac.za
-# Contributors: Bruce Merry, Campbell Barton
-
-
-# ORIGINAL bl_info BLOCK
-'''
-bl_info = {
     "name": "Stanford PLY format",
-    "author": "Bruce Merry, Campbell Barton", "Bastien Montagne"
-    "version": (2, 1, 0),
-    "blender": (2, 90, 0),
+    "author": "Bruce Merry, Campbell Barton, Bastien Montagne, Mikhail Rachinsky",
+    "version": (2, 2, 0),
+    "blender": (3, 0, 0),
     "location": "File > Import/Export",
     "description": "Import-Export PLY mesh data with UVs and vertex colors",
     "doc_url": "{BLENDER_MANUAL_URL}/addons/import_export/mesh_ply.html",
     "support": 'OFFICIAL',
     "category": "Import-Export",
 }
-'''
+
+# Copyright (C) 2004, 2005: Bruce Merry, bmerry@cs.uct.ac.za
+# Contributors: Bruce Merry, Campbell Barton
 
 if "bpy" in locals():
     import importlib
@@ -74,7 +59,7 @@ from bpy_extras.io_utils import (
 class ImportPLY(bpy.types.Operator, ImportHelper):
     """Load a PLY geometry file"""
     bl_idname = "import_mesh.ply"
-    bl_label = "Import PLY as Verts"
+    bl_label = "Import PLY"
     bl_options = {'UNDO'}
 
     files: CollectionProperty(
@@ -82,6 +67,7 @@ class ImportPLY(bpy.types.Operator, ImportHelper):
         description="File path used for importing the PLY file",
         type=bpy.types.OperatorFileListElement,
     )
+    
     # use_verts checkbox
     use_verts: BoolProperty(
         name="Verts/Colors Only",
@@ -314,11 +300,11 @@ class PLY_PT_export_geometry(bpy.types.Panel):
 
 
 def menu_func_import(self, context):
-    self.layout.operator(ImportPLY.bl_idname, text="Stanford PLY as Verts")
+    self.layout.operator(ImportPLY.bl_idname, text="Stanford (.ply)")
 
 
 def menu_func_export(self, context):
-    self.layout.operator(ExportPLY.bl_idname, text="Stanford PLY as Verts")
+    self.layout.operator(ExportPLY.bl_idname, text="Stanford (.ply)")
 
 
 classes = (
