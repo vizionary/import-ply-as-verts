@@ -17,33 +17,7 @@
 # ##### END GPL LICENSE BLOCK #####
 
 # <pep8 compliant>
-'''
- Import PLY as Verts
- This module is close to 90% the original code supplied with Blender as the stock PLY import addon.
- I have attempted to change it as little as possible and still obtain the desired result.
 
- All love and respect to the original programmers who did all the heavy lifting for me :)
-
-CHANGELOG
- v2.1 - Refactored the Brad Patch to theoretically accept any sort of weird ply file by only
-    extracting the named color data (rgb[a]) from colindices.
-
- v2.0 - Reintegrated the original importer and added Verts/Colors as load option.  Now correctly loads:
-
-    MB3D BTracer Point Cloud PLY (v1.99 and earlier)
-    MB3D BTracer2 PLY (v1.99.12 and later)
-    JWF  Point Cloud (a few edge cases may remain, these will be patched as necessary)
-    Photogrammetry and other generic PLY containing at least vertex and color information
-
- v1.01 - "The Brad Patch": Added additional if clause to allow for unorthodox JWF ply files that contain odd
-    data similar to pscale and intensity
-
-
- ISSUES
-      Feb 20, 2022 - When a user attempts to load a point cloud as a mesh,
-        the autodetect routine causes read() to be called twice.  Working on a fix.
-
-'''
 
 from pickle import FALSE
 
@@ -213,7 +187,6 @@ def read(self, filepath):
                     custom_line_sep = b'\n'
                 else:
                     custom_line_sep = b"\n\r"
-        ########
 
         # Work around binary file reading only accepting "\n" as line separator.
         # The below line causes pep8 code e731
@@ -293,13 +266,12 @@ def read(self, filepath):
             print("Invalid header ('end_header' line not found!)")
             return invalid_ply
 
-    # 1 April 2022 - Moved these two conditions here
         # If user attempts to load point cloud as mesh, flip the bit
         # Case 1 - Only verts in file
         if len(obj_spec.specs) < 2:
             self.use_verts = True
 
-        # Case 2 - 'element face 0' in file (JWF, we see you!)
+        # Case 2 - 'element face 0' in file
         elif (obj_spec.specs[1].count == 0):
             self.use_verts = True
 
@@ -312,7 +284,7 @@ def load_ply_mesh(self, filepath, ply_name):
     import bpy
 
     obj_spec, obj, texture = read(self, filepath)
-
+    # XXX28: use texture
     if obj is None:
         print("Invalid file")
         return
@@ -464,7 +436,7 @@ def load_ply_mesh(self, filepath, ply_name):
         if texture and uvindices:
             pass
 
-            # MP NOTE - Comment left from original code
+            # MP NOTE - Comments left from original code
 
             # TODO add support for using texture.
 
@@ -508,8 +480,7 @@ def load_ply_verts(self, filepath, ply_name):
     uvindices = colindices = None
     colmultiply = None
     normals = False
-    jwf = False
-
+    
     # Read the file
     for el in obj_spec.specs:
         if el.name == b'vertex':
@@ -586,7 +557,7 @@ def load_ply(self, filepath):
     else:
         mesh = load_ply_mesh(self, filepath, ply_name)
 
-        # If a good ole' edge/face mesh is returned, create a Blender object.
+        # If an edge/face mesh is returned, create a Blender object.
         # (if an autodetected cloud comes back it will already have this done to it in load_ply_verts)
 
         if not self.use_verts:
